@@ -12,6 +12,8 @@ jobs:
       - checkout
       - restore_cache:
           key: android-orb-v1-
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
@@ -23,6 +25,12 @@ jobs:
           paths:
             - ~/.android/build-cache
             - ~/.android/cache
+      - save_cache:
+          key: -gradle-v1-{{ arch }}-{{ checksum/tmp/gradle_cache_seed }}
+          name: Save gradle cache
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
       - run:
           name: Run Build
           command: ./gradlew build
